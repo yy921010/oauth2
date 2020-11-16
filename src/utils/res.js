@@ -1,4 +1,4 @@
-const config = require('../oauth/config');
+const config = require('../config');
 
 const combineResponse = tokenData => {
   return {
