@@ -3,29 +3,27 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ClientSchema = new Schema({
+  id: String,
   clientId: String,
   clientSecret: String,
   isLocked: Number,
   accessTokenValidateSeconds: Number,
   refreshTokenValidateSeconds: Number,
-  meta: {
-    createAt: {
-      type: Date,
-      dafault: Date.now()
-    },
-    updateAt: {
-      type: Date,
-      dafault: Date.now()
-    }
+  createAt: {
+    type: Date,
+    dafault: Date.now()
+  },
+  updateAt: {
+    type: Date,
+    dafault: Date.now()
   }
 });
 
-// Defines a pre hook for the document.
 ClientSchema.pre('save', function(next) {
   if (this.isNew) {
-    this.meta.createAt = this.meta.updateAt = Date.now();
+    this.createAt = this.updateAt = Date.now();
   } else {
-    this.meta.updateAt = Date.now();
+    this.updateAt = Date.now();
   }
   next();
 });

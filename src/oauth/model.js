@@ -1,6 +1,6 @@
 const fmt = require('util').format;
-const userModel = require('../mongoose/models/userModel');
-const clientModel = require('../mongoose/models/clientModel');
+const UserModel = require('../mongoose/models/userModel');
+const ClientModel = require('../mongoose/models/clientModel');
 const log4js = require('../utils/log4j');
 const redisClient = require('../redis');
 /**
@@ -20,22 +20,22 @@ module.exports = {
    * @param {*} clientSecret
    */
   async getClient(clientId, clientSecret) {
-    const client = await clientModel.findOne({
-      clientId: clientId
-    });
-
+    log.info('[getClient] msg --> enter');
+    log.debug('[getClient] clientId -->', clientId);
+    log.debug('[getClient] clientSecret -->', clientSecret);
+    const client = await ClientModel.findOne({ clientId: '123456' });
     if (!client) {
-      log.warn('client is empty');
+      log.warn('[getClient] client is empty');
       return;
     }
 
     if (client.clientSecret !== clientSecret) {
-      log.warn("client's clientSecret is wrong");
+      log.warn("[getClient] client's clientSecret is wrong");
       return;
     }
 
     if (+client.isLocked === 1) {
-      log.warn('client is locked');
+      log.warn('[getClient] client is locked');
       return;
     }
 
@@ -48,27 +48,27 @@ module.exports = {
   },
 
   async getUser(username, password) {
-    const user = await userModel.findOne({
+    log.info('[getUser] msg --> enter');
+    const user = await UserModel.findOne({
       username
     });
     if (!user) {
-      log.warn('user is empty');
+      log.warn('[getUser] user is empty');
       return;
     }
 
     if (user.password !== password) {
-      log.warn("user's password is wrong");
+      log.warn("[getUser] user's password is wrong");
       return;
     }
 
     if (+user.isLocked === 1) {
-      log.warn('user is locked');
+      log.warn('[getUser] user is locked');
       return;
     }
-
     return {
       id: user.id,
-      scope: user.scope
+      scope: user.scope || ['web', 'ott', 'stb']
     };
   },
 
@@ -79,6 +79,12 @@ module.exports = {
    * @param {*} scope
    */
   async validateScope(user, client, scope) {
+    if (!scope) {
+      throw new Error('scope is null');
+    }
+    log.debug('[validateScope] [user] -->', user);
+    log.debug('[validateScope] [client] -->', client);
+    log.debug('[validateScope] [scope] -->', scope);
     return scope
       .split(':')
       .filter(s => user.scope.indexOf(s) >= 0)
@@ -94,10 +100,15 @@ module.exports = {
       user,
       client
     };
-    return Promise.all([
-      redisClient.hmset(fmt(formats.token, token.accessToken), data),
-      redisClient.hmset(fmt(formats.token, token.refreshToken), data)
-    ]).return(data);
+    log.debug('[saveToken] data -->', data);
+    redisClient.hmset(fmt(formats.token, token.accessToken), JSON.stringify([data]), (err, res) => {
+      console.log(err, res);
+    });
+    return data;
+    // return Promise.all([
+    //   redisClient.hmset(fmt(formats.token, token.accessToken), data),
+    //   redisClient.hmset(fmt(formats.token, token.refreshToken), data)
+    // ]).return(data);
   },
 
   async getAccessToken(bearerToken) {

@@ -16,7 +16,7 @@ router.post('/oauth/token', async ctx => {
   const { request, response } = ctx;
   const oauthReq = new Request(request);
   const oauthRes = new Response(response);
-  const tokenObject = oauthServe.token(oauthReq, oauthRes);
+  const tokenObject = await oauthServe.token(oauthReq, oauthRes);
   ctx.body = combineResponse(tokenObject);
 });
 
