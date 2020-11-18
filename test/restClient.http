@@ -6,3 +6,17 @@ username=admin
 &password=a0bc807b86bce3e63ad621eec41c3eb5
 &grant_type=password
 &scope=web
+
+### 
+get http://localhost:7001/oauth/secure_data
+Content-Type: application/json
+Authorization: Bearer c51c781cf5ec154b8efabe33045f3c6cb7cdd530
+
+
+###
+POST  http://localhost:7001/oauth/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic MTIzNDU2OjEyMzQ1Ng==
+
+refresh_token=9b17ec7856fb0929b4edd4aca8b7bffd05c00d9b
+&grant_type=refresh_token

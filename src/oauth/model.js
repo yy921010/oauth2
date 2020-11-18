@@ -92,23 +92,27 @@ module.exports = {
   },
 
   async saveToken(token, client, user) {
+    const pipe = redisClient.pipeline();
     const data = {
-      accessToken: token.accessToken,
-      accessTokenExpiresAt: token.accessTokenExpiresAt,
-      refreshToken: token.refreshToken,
-      refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-      user,
-      client
+      ...token,
+      user: {
+        id: user.id
+      },
+      client: {
+        id: client.id,
+        accessTokenLifetime: client.accessTokenLifetime
+      }
     };
-    log.debug('[saveToken] data -->', data);
-    redisClient.hmset(fmt(formats.token, token.accessToken), JSON.stringify([data]), (err, res) => {
-      console.log(err, res);
-    });
+    token.clientId = client.id;
+    token.userId = user.id;
+    await pipe
+      .hmset(fmt(formats.token, token.accessToken), token)
+      .hmset(fmt(formats.token, token.refreshToken), token)
+      .exec()
+      .then(result => {
+        log.debug('[saveToken] token %s saved successfully', token);
+      });
     return data;
-    // return Promise.all([
-    //   redisClient.hmset(fmt(formats.token, token.accessToken), data),
-    //   redisClient.hmset(fmt(formats.token, token.refreshToken), data)
-    // ]).return(data);
   },
 
   async getAccessToken(bearerToken) {
@@ -116,32 +120,45 @@ module.exports = {
     if (!token) {
       return;
     }
+    log.debug('[getAccessToken] token = %s', token);
     return {
       accessToken: token.accessToken,
-      accessTokenExpiresAt: token.accessTokenExpiresAt,
+      accessTokenExpiresAt: new Date(token.accessTokenExpiresAt),
       scope: token.scope,
-      client: token.client,
-      user: token.user
+      client: {
+        id: token.clientId
+      },
+      user: {
+        id: token.userId
+      }
     };
   },
 
   async getRefreshToken(bearerToken) {
     const token = await redisClient.hgetall(fmt(formats.token, bearerToken));
+    log.debug('[getRefreshToken] token = %s', token);
     if (!token) {
       return;
     }
 
     return {
-      refreshToken: token.accessToken,
-      refreshTokenExpiresAt: token.accessTokenExpiresAt,
+      refreshToken: token.refreshToken,
+      refreshTokenExpiresAt: new Date(token.refreshTokenExpiresAt),
       scope: token.scope,
-      client: token.client,
-      user: token.user
+      client: {
+        id: token.clientId
+      },
+      user: {
+        id: token.userId
+      }
     };
   },
 
-  async revokeToken(bearerToken) {
-    const result = await redisClient.hdel((fmt(formats.token, bearerToken)));
+  async revokeToken(token) {
+    log.info('[revokeToken] enter');
+    log.debug('[revokeToken] token = %s', token);
+    const result = await redisClient.del((fmt(formats.token, token.refreshToken)));
+    log.debug('[revokeToken] result= %s', result);
     return result;
   }
 };

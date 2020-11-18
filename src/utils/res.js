@@ -1,10 +1,9 @@
-const config = require('../config');
 
 const combineResponse = tokenData => {
   return {
     access_token: tokenData.accessToken,
-    refreshToken: tokenData.refreshToken,
-    expires_in: config.accessTokenLifetime,
+    refresh_token: tokenData.refreshToken,
+    expires_in: tokenData.client.accessTokenLifetime,
     token_type: 'Bearer'
   };
 };
