@@ -3,6 +3,7 @@ const UserModel = require('../mongoose/models/userModel');
 const ClientModel = require('../mongoose/models/clientModel');
 const log4js = require('../utils/log4j');
 const redisClient = require('../redis');
+const { isEmpty } = require('../utils/tool');
 /**
  * Redis formats.
  */
@@ -117,7 +118,7 @@ module.exports = {
 
   async getAccessToken(bearerToken) {
     const token = await redisClient.hgetall(fmt(formats.token, bearerToken));
-    if (!token) {
+    if (isEmpty(token)) {
       return;
     }
     log.debug('[getAccessToken] token = %s', token);
@@ -137,7 +138,7 @@ module.exports = {
   async getRefreshToken(bearerToken) {
     const token = await redisClient.hgetall(fmt(formats.token, bearerToken));
     log.debug('[getRefreshToken] token = %s', token);
-    if (!token) {
+    if (isEmpty(token)) {
       return;
     }
 
