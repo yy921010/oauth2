@@ -25,18 +25,13 @@ module.exports = {
         pattern: 'yyyyMMdd',
         daysToKeep: 60,
         numBackups: 3,
-        category: 'http',
         keepFileExt: true
       }
     },
     categories: {
       default: {
-        appenders: ['access'],
+        appenders: ['access', 'console'],
         level: 'INFO'
-      },
-      console: {
-        appenders: ['console'],
-        level: 'ERROR'
       }
     }
   }
