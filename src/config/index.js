@@ -13,5 +13,31 @@ module.exports = {
     host: '127.0.0.1',
     family: 4
   },
-  log4j: {}
+  log4j: {
+    appenders: {
+      console: {
+        type: 'console'
+      },
+      access: {
+        type: 'dateFile',
+        filename: '/Users/charles/Desktop/hadron-logs/access/access.log',
+        alwaysIncludePattern: true,
+        pattern: 'yyyyMMdd',
+        daysToKeep: 60,
+        numBackups: 3,
+        category: 'http',
+        keepFileExt: true
+      }
+    },
+    categories: {
+      default: {
+        appenders: ['access'],
+        level: 'INFO'
+      },
+      console: {
+        appenders: ['console'],
+        level: 'ERROR'
+      }
+    }
+  }
 };

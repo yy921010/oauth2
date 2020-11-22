@@ -21,13 +21,13 @@ router.post('/oauth/token', async ctx => {
   ctx.body = combineResponse(tokenObject);
 });
 
-router.get('/oauth/secure_data', async(ctx, next) => {
+router.get('/oauth/test', async(ctx, next) => {
   const { request, response } = ctx;
   const oauthReq = new Request(request);
   const oauthRes = new Response(response);
   const result = await oauthServe.authenticate(oauthReq, oauthRes);
   log.debug('[/oauth/secure_data]', result);
-  ctx.body = 'secure data';
+  ctx.body = 'test done!!';
 });
 
 module.exports = router;

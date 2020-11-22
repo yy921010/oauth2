@@ -17,15 +17,9 @@ app.use(
   })
 );
 app.use(json());
-app.use(logger());
-
-// logger
-app.use(async(ctx, next) => {
-  const start = new Date();
-  await next();
-  const ms = new Date() - start;
-  log.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
-});
+app.use(logger((str, arg) => {
+  log.info(str);
+}));
 
 // routes
 app.use(index.routes(), index.allowedMethods());

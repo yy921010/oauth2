@@ -23,6 +23,11 @@ const compatibleTokenError = errorMsg => {
       responseBody.error_message = errorMsg;
       responseBody.http_code = 401;
       break;
+    case 'Invalid grant: refresh token has expired':
+      responseBody.error_code = codePrefix + '101013';
+      responseBody.error_message = errorMsg;
+      responseBody.http_code = 400;
+      break;
     default:
       break;
   }

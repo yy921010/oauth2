@@ -8,7 +8,7 @@ username=admin
 &scope=web
 
 ### 
-get http://localhost:7001/oauth/secure_data
+get http://localhost:7001/oauth/test
 Content-Type: application/json
 Authorization: Bearer 995ceee5063d376c66b221362ab3b3a4861b4c2f
 
@@ -18,5 +18,5 @@ POST  http://localhost:7001/oauth/token
 Content-Type: application/x-www-form-urlencoded
 Authorization: Basic MTIzNDU2OjEyMzQ1Ng==
 
-refresh_token=9b17ec7856fb0929b4edd4aca8b7bffd05c00d9b
+refresh_token=e5b8ee1656e1d7349f4cd4e0d68a5b85c8850525
 &grant_type=refresh_token
