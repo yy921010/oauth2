@@ -4,6 +4,8 @@ const ClientModel = require('../mongoose/models/clientModel');
 const log4js = require('../utils/log4j');
 const redisClient = require('../redis');
 const { isEmpty } = require('../utils/tool');
+const HttpException = require('../utils/httpException');
+const errorCode = require('./errorCode');
 /**
  * Redis formats.
  */
@@ -24,20 +26,20 @@ module.exports = {
     log.info('[getClient] msg --> enter');
     log.debug('[getClient] clientId -->', clientId);
     log.debug('[getClient] clientSecret -->', clientSecret);
-    const client = await ClientModel.findOne({ clientId: '123456' });
+    const client = await ClientModel.findOne({ clientId });
     if (!client) {
-      log.warn('[getClient] client is empty');
-      return;
+      log.info('[getClient] client is empty');
+      throw new HttpException(errorCode.CLIENT_IS_ILLEGAL);
     }
 
     if (client.clientSecret !== clientSecret) {
-      log.warn("[getClient] client's clientSecret is wrong");
-      return;
+      log.info("[getClient] client's clientSecret is wrong");
+      throw new HttpException(errorCode.CLIENT_IS_ILLEGAL);
     }
 
     if (+client.isLocked === 1) {
-      log.warn('[getClient] client is locked');
-      return;
+      log.info('[getClient] client had locked');
+      throw new HttpException(errorCode.CLIENT_HAD_LOCKED);
     }
 
     return {
@@ -54,18 +56,18 @@ module.exports = {
       username
     });
     if (!user) {
-      log.warn('[getUser] user is empty');
-      return;
+      log.info('[getUser] user is empty');
+      throw new HttpException(errorCode.USERNAME_OR_PASSWORD_IS_ERROR);
     }
 
     if (user.password !== password) {
-      log.warn("[getUser] user's password is wrong");
-      return;
+      log.info("[getUser] user's password is wrong");
+      throw new HttpException(errorCode.USERNAME_OR_PASSWORD_IS_ERROR);
     }
 
     if (+user.isLocked === 1) {
-      log.warn('[getUser] user is locked');
-      return;
+      log.info('[getUser] user is locked');
+      throw new HttpException(errorCode.USER_HAD_LOCKED);
     }
     return {
       id: user.id,
@@ -81,15 +83,22 @@ module.exports = {
    */
   async validateScope(user, client, scope) {
     if (!scope) {
-      throw new Error('scope is null');
+      log.info('scope is empty');
+      throw new HttpException(errorCode.SCOPE_INVALID);
     }
     log.debug('[validateScope] [user] -->', user);
     log.debug('[validateScope] [client] -->', client);
     log.debug('[validateScope] [scope] -->', scope);
-    return scope
+    const isPassed = scope
       .split(':')
       .filter(s => user.scope.indexOf(s) >= 0)
       .join(' ');
+
+    if (!isPassed) {
+      log.info('Invalid scope');
+      throw new HttpException(errorCode.SCOPE_IS_WRONG);
+    }
+    return isPassed;
   },
 
   async saveToken(token, client, user) {
@@ -119,7 +128,8 @@ module.exports = {
   async getAccessToken(bearerToken) {
     const token = await redisClient.hgetall(fmt(formats.token, bearerToken));
     if (isEmpty(token)) {
-      return;
+      log.debug('[getAccessToken] - token is empty');
+      throw new HttpException(errorCode.TOKEN_INVALID);
     }
     log.debug('[getAccessToken] token = %s', token);
     return {
@@ -139,7 +149,7 @@ module.exports = {
     const token = await redisClient.hgetall(fmt(formats.token, bearerToken));
     log.debug('[getRefreshToken] token = %s', token);
     if (isEmpty(token)) {
-      return;
+      throw new HttpException(errorCode.REFRESH_TOKEN_INVALID);
     }
 
     return {

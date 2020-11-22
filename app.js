@@ -1,15 +1,15 @@
 const Koa = require('koa');
 const app = new Koa();
 const json = require('koa-json');
-const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const index = require('./src/routes');
 const log = require('./src/utils/log4j').getLogger('app');
-require('./src/mongoose');
-// error handler
-onerror(app);
+const errorHandle = require('./src/utils/errorHandle');
 
+require('./src/mongoose');
+
+app.use(errorHandle);
 // middlewares
 app.use(
   bodyparser({

@@ -10,7 +10,7 @@ username=admin
 ### 
 get http://localhost:7001/oauth/secure_data
 Content-Type: application/json
-Authorization: Bearer c51c781cf5ec154b8efabe33045f3c6cb7cdd530
+Authorization: Bearer 995ceee5063d376c66b221362ab3b3a4861b4c2f
 
 
 ###
