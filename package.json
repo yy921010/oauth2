@@ -1,6 +1,6 @@
 {
   "name": "oauth2-koa2",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "start": "node bin/www",
@@ -8,7 +8,8 @@
     "prd": "pm2 start ./dist/index.js",
     "test": "jest --coverage",
     "lint": "eslint .",
-    "build:single:file": "ncc build ./bin/www -m"
+    "build:single:file": "ncc build ./bin/www -m",
+    "prod":"npm run build:single:file && npm run prd "
   },
   "dependencies": {
     "bluebird": "^3.7.2",
