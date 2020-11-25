@@ -1,0 +1,21 @@
+
+syntax = "proto3";
+
+package oauth;
+
+
+// The greeting service definition.
+service OAuth2Service {
+  // Sends a greeting
+  rpc SayHello (OAuthRquest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message OAuthRquest {
+  string token = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}

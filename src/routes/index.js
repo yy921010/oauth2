@@ -1,5 +1,5 @@
 const router = require('koa-router')();
-const oauthServe = require('../oauth/index');
+const oauthServe = require('../oauth');
 const Request = require('oauth2-server').Request;
 const Response = require('oauth2-server').Response;
 const combineResponse = require('../utils/res');

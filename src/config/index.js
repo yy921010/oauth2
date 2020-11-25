@@ -8,6 +8,7 @@ module.exports = {
       useUnifiedTopology: true
     }
   },
+  grpcServe: '127.0.0.1:5005',
   redis: {
     port: 6379,
     host: '127.0.0.1',
