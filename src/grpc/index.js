@@ -24,7 +24,10 @@ const authenticate = (call, callback) => {
     }
   });
   const response = new Response();
-  const ctx = {};
+  const ctx = {
+    response: {},
+    status: 200
+  };
   errorHandle(ctx, () => { return OAuthServe.authenticate(request, response); });
   callback(null, { message: 'Hello ' + call.request.name });
 };
