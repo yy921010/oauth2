@@ -4,18 +4,17 @@ syntax = "proto3";
 package oauth;
 
 
-// The greeting service definition.
 service OAuth2Service {
   // Sends a greeting
-  rpc SayHello (OAuthRquest) returns (HelloReply) {}
+  rpc Authenticate (OAuthRequest) returns (OAuthResponse) {}
 }
 
-// The request message containing the user's name.
-message OAuthRquest {
+message OAuthRequest {
   string token = 1;
 }
 
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
+message OAuthResponse {
+  int32 status = 1;
+  string error_code = 2;
+  string error_message = 3;
 }

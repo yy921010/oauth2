@@ -1,5 +1,5 @@
 module.exports = {
-  port: 7001,
+  port: 7000,
   accessTokenLifetime: 300,
   mongoose: {
     uri: 'mongodb://127.0.0.1:27017/tmk',
@@ -8,7 +8,7 @@ module.exports = {
       useUnifiedTopology: true
     }
   },
-  grpcServe: '127.0.0.1:5005',
+  grpcServe: '0.0.0.0:50051',
   redis: {
     port: 6379,
     host: '127.0.0.1',
