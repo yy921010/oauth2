@@ -5,7 +5,7 @@ const compatibleTokenError = require('../oauth/compatibleTokenError');
 const { isEmpty } = require('../utils/tool');
 
 const errorDeal = (ctx, err) => {
-  log.error('[errorHandle] error', err, 'errorRequestUrl', ctx.request.url);
+  log.error('[errorHandle] error', err, 'errorRequestUrl = ', ctx.request.url);
   let status = 400;
   if (err instanceof OAuthError) {
     if (isEmpty(compatibleTokenError(err.message))) {

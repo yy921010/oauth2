@@ -7,6 +7,7 @@ const OAuthServe = require('../oauth');
 const { errorDeal } = require('../utils/errorHandle');
 const log = require('../utils/log4j').getLogger('grpc');
 const path = require('path');
+const { mask } = require('../utils/tool');
 
 const PROTO_PATH = path.join(__dirname, './oauth2.proto');
 
@@ -23,28 +24,34 @@ const oauthProto = grpc.loadPackageDefinition(packageDefinition).oauth;
 const authenticate = async(call, callback) => {
   const token = call.request.token;
   const request = new Request({
-    method: 'get',
+    method: 'GET',
     query: {},
     headers: {
       authorization: token
     }
   });
   const response = new Response();
-  log.info('[authenticate] token', token);
-  await OAuthServe.authenticate(request, response)
-    .catch(error => {
-      log.error('[authenticate] error', error);
-      const errorBody = errorDeal({
-        status: 200
-      }, error);
-      callback(null, errorBody);
+  log.info('[authenticate] check token = ', mask(token));
+  try {
+    await OAuthServe.authenticate(request, response);
+    log.info('[authenticate] token is check pass');
+    callback(null, {
+      status: 200,
+      error_code: '',
+      error_message: ''
     });
-  log.info('[authenticate] token is check pass');
-  callback(null, {
-    status: 200,
-    error_code: '',
-    error_message: ''
-  });
+  } catch (error) {
+    const errorBody = errorDeal(
+      {
+        status: 200,
+        request: {
+          url: 'grpc_call'
+        }
+      },
+      error
+    );
+    callback(null, errorBody);
+  }
 };
 
 const main = () => {

@@ -8,11 +8,11 @@ const UserSchema = new Schema({
   id: String,
   createAt: {
     type: Date,
-    dafault: Date.now()
+    default: Date.now()
   },
   updateAt: {
     type: Date,
-    dafault: Date.now()
+    default: Date.now()
   }
 });
 

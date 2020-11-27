@@ -28,6 +28,11 @@ const compatibleTokenError = errorMsg => {
       responseBody.error_message = errorMsg;
       responseBody.http_code = 400;
       break;
+    case 'Invalid request: malformed authorization header':
+      responseBody.error_code = codePrefix + '101014';
+      responseBody.error_message = errorMsg;
+      responseBody.http_code = 400;
+      break;
     default:
       break;
   }
