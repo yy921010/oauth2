@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+package oauth;
+
+
+service OAuth2Service {
+  // Sends a greeting
+  rpc Authenticate (OAuthRequest) returns (OAuthResponse) {}
+}
+
+message OAuthRequest {
+  string token = 1;
+}
+
+message OAuthResponse {
+  int32 status = 1;
+  string error_code = 2;
+  string error_message = 3;
+}

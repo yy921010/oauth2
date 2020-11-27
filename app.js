@@ -5,10 +5,11 @@ const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const index = require('./src/routes');
 const log = require('./src/utils/log4j').getLogger('app');
-const errorHandle = require('./src/utils/errorHandle');
-
+const { errorHandle } = require('./src/utils/errorHandle');
+const grpcService = require('./src/grpc');
 require('./src/mongoose');
 
+grpcService();
 app.use(errorHandle);
 // middlewares
 app.use(

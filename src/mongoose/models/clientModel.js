@@ -11,11 +11,11 @@ const ClientSchema = new Schema({
   refreshTokenValidateSeconds: Number,
   createAt: {
     type: Date,
-    dafault: Date.now()
+    default: Date.now()
   },
   updateAt: {
     type: Date,
-    dafault: Date.now()
+    default: Date.now()
   }
 });
 
