@@ -22,16 +22,16 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const oauthProto = grpc.loadPackageDefinition(packageDefinition).oauth;
 
 const authenticate = async(call, callback) => {
-  const token = call.request.token;
+  const authorization = call.request.authorization;
   const request = new Request({
     method: 'GET',
     query: {},
     headers: {
-      authorization: token
+      authorization
     }
   });
   const response = new Response();
-  log.info('[authenticate] check token = ', mask(token));
+  log.info('[authenticate] check token = ', mask(authorization));
   try {
     await OAuthServe.authenticate(request, response);
     log.info('[authenticate] token is check pass');
